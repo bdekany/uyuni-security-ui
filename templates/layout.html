@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SUMA API UI</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- Bulma Version 0.8.x-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.8.0/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/admin.css">
+    <link rel="stylesheet" type="text/css" href="/static/tabletop.css">
+    <script src='/static/tablesort.min.js'></script>
+    <script src='/static/tablesort.number.min.js'></script>
+</head>
+
+<body>
+
+    <!-- START NAV -->
+    <nav class="navbar is-white">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item brand-text" href="/">
+          SUMA API UI
+        </a>
+                <div class="navbar-burger burger" data-target="navMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div id="navMenu" class="navbar-menu">
+                <div class="navbar-start">
+                </div>
+
+            </div>
+        </div>
+    </nav>
+    <!-- END NAV -->
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3 ">
+                <aside class="menu is-hidden-mobile">
+                    <p class="menu-label">
+                        Navigation
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="/">Systems Currency</a></li>
+                        <li><a href="/scans">OpenScap Scans</a></li>
+                        <li><a href="/login">Login/Config</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="column is-9">
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <section class="section">
+    {% for message in messages %}
+	<div class="notification is-warning">
+	{{ message }}
+	</div>
+    {% endfor %}
+    </section>
+  {% endif %}
+{% endwith %}
+	
+		{% block body %}{% endblock %}
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

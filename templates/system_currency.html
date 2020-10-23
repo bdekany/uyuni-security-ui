@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block body %}
+                <section class="info-tiles">
+                    <div class="tile is-ancestor has-text-centered">
+                        <div class="tile is-parent">
+                            <article class="tile is-child box">
+				    <p class="title">{{ score|length }}</p>
+                                <p class="subtitle">Systems</p>
+                            </article>
+                        </div>
+			<!--
+                        <div class="tile is-parent">
+                            <article class="tile is-child box">
+                                <p class="title">59k</p>
+                                <p class="subtitle">Products</p>
+                            </article>
+                        </div>
+			-->
+                    </div>
+                </section>
+
+                <section class="hero is-info is-bold is-small">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                Systems Currency
+                            </h1>
+                            <h2 class="subtitle">
+                                Tri par colonne possible.
+                            </h2>
+
+  <table class="table is-striped is-hoverable is-fullwidth" id="system-currency">
+  <!-- {'score': 123, 'mod': 4, 'crit': 0, 'low': 0, 'bug': 21, 'imp': 3, 'enh': 1, 'sid': 1000010011} -->
+  <thead>
+  <tr>
+     <th>System Name</th>
+     <th data-sort-default>Score</th>
+    <th>Security Critical</th>
+    <th>Security Important</th>
+    <th>Security Moderate</th>
+    <th>Security Low</th>
+    <th>Bugfix</th>
+    <th>Enhancements</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for item in score %}
+  <tr>
+    <td>{{ item.name }}</td>
+    <td>{{ item.score }}</td>
+    <td>{{ item.crit }}</td>
+    <td>{{ item.imp }}</td>
+    <td>{{ item.mod }}</td>
+    <td>{{ item.low }}</td>
+    <td>{{ item.bug }}</td>
+    <td>{{ item.enh }}</td>
+  </tr>
+  {% else %}
+    <tr><td><em>Unbelievable.  No entries here so far</em></td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+
+	<script>
+		new Tablesort(document.getElementById('system-currency'), {
+		  descending: true
+		});
+	</script>
+                        </div>
+                    </div>
+                </section>
+{% endblock %}

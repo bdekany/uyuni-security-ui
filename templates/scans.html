@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block body %}
+                <section class="info-tiles">
+                    <div class="tile is-ancestor has-text-centered">
+                        <div class="tile is-parent">
+                            <article class="tile is-child box">
+				    <p class="title">{{ scans|length }}</p>
+                                <p class="subtitle">Systems</p>
+                            </article>
+                        </div>
+			<!--
+                        <div class="tile is-parent">
+                            <article class="tile is-child box">
+                                <p class="title">59k</p>
+                                <p class="subtitle">Products</p>
+                            </article>
+                        </div>
+			-->
+                    </div>
+                </section>
+
+                <section class="hero is-success is-bold is-small">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                Scans OpenSCAP
+                            </h1>
+                            <h2 class="subtitle">
+                                Cliquez sur une date pour afficher le rapport.
+                            </h2>
+
+	  <!-- {'name': 'guest1.zypp.lo', 'sid': 1000010011, 'actions': [548]} -->
+	  {% for item in scans %}
+	  <div class="box content">
+	  <p><strong> {{ item.name }} </strong>
+	  <ul>
+	      {% for action in item.actions %}
+	      <li><a href="/download/{{item.sid}}/{{ action.action_id }}">{{ action.date }}</a></li>
+	      {% endfor %}
+	  </ul>
+	  </p>
+	  </div>
+	  {% endfor %}	
+
+
+                        </div>
+                    </div>
+                </section>
+{% endblock %}
