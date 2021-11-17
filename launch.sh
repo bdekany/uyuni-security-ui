@@ -28,7 +28,7 @@ while true; do
       [Yy]* )
 	  echo -e "Execution en cours."
           export FLASK_APP=app.py
-          flask run --host=0.0.0.0
+          flask run --host=0.0.0.0 --cert=/root/ssl-build/RHN-ORG-TRUSTED-SSL-CERT --key=/root/ssl-build/RHN-ORG-PRIVATE-SSL-KEY
 	  break
 	  ;;
       [Nn]* )

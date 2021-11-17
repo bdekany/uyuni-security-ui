@@ -1,6 +1,6 @@
 import ssl
 from xmlrpc.client import ServerProxy, Fault
-from flask import Flask, g, session, redirect, url_for, request, render_template, flash
+from flask import Flask, g, session, redirect, url_for, request, render_template, render_template_string, flash
 
 app = Flask(__name__)
 
@@ -18,7 +18,16 @@ def get_name(sid):
     # {'name': 'guest1.zypp.lo', 'id': 1000010011, 'last_checkin': <DateTime '20200114T23:00:13' at 0x7f821ffe5400>}
     client = get_client()
     try:
-        return client.system.get_name(session['key'], sid)['name']
+        return client.system.getName(session['key'], sid)['name']
+    except Fault as err:
+        flash("Erreur API : %s" % err.faultString)
+        return None
+
+def list_groups(sid):
+    client = get_client()
+    try:
+        test = client.system.list_groups(session['key'], sid)
+        return test
     except Fault as err:
         flash("Erreur API : %s" % err.faultString)
         return None
@@ -30,13 +39,25 @@ def index():
     client = get_client()
     try:
         score = client.system.get_system_currency_scores(session['key'])
+        groups = client.systemgroup.listAllGroups(session['key'])
     except Fault as err:
         flash("Erreur API : %s" % err.faultString)
         session.pop('username', None)
         return redirect(url_for('login'))
     for i in range( len(score) ):
         score[i]["name"] = get_name(score[i]["sid"])
-    return render_template('system_currency.html', score=score)
+    for i in range( len(score) ):
+        score[i]["groups"] = list_groups(score[i]["sid"])
+    selected_group=request.args.get('selected_group')
+    selected_sid = 0
+    name = ""
+    if request.args.get('selected_sid') != None:
+        selected_sid = int(request.args.get('selected_sid'))
+        name = get_name(selected_sid)
+    patches=[]
+    if selected_sid != 0:
+        patches=client.system.getRelevantErrata(session['key'],selected_sid)
+    return render_template('system_currency.html', score=score, groups=groups, selected_group=selected_group,selected_sid=selected_sid,patches=patches,name=name)
 
 @app.route('/scans')
 def scans():
@@ -58,12 +79,34 @@ def scans():
         session.pop('username', None)
         return redirect(url_for('login'))
 
+@app.route('/cve')
+def cve():
+    if ('username' or 'password' or 'hostname') not in session:
+        return redirect(url_for('login'))
+    client = get_client()
+    cve = []
+    try:
+        if request.args.get('input_cve') != None:
+            selected_cve=request.args.get('input_cve')
+            for system in client.audit.listSystemsByPatchStatus(session['key'],selected_cve):
+                system['hostname'] = client.system.getDetails(session['key'],system['system_id'])['hostname']
+                cve.append(system)
+    except Fault as err:
+        flash("The CVE "+request.args.get('input_cve')+" doesn't exist.")
+    try:
+#        selected_cve="CVE-2019-20916"
+        return render_template('cve.html', cve=cve)
+    except Fault as err:
+        flash("Erreur API : %s" % err.faultString)
+        session.pop('username', None)
+        return redirect(url_for('login'))
+
 @app.route('/download/<int:sys_id>/<int:action_id>')
 def download(sys_id=None, action_id=None):
     path = "/var/spacewalk/systems/1/%s/actions/%s/report.html" % (sys_id, action_id)
     with open(path, 'r') as content_file:
         content = content_file.read()
-        return content
+        return render_template_string(content)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

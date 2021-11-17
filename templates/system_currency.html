@@ -1,40 +1,40 @@
 {% extends "layout.html" %}
 {% block body %}
-                <section class="info-tiles">
-                    <div class="tile is-ancestor has-text-centered">
-                        <div class="tile is-parent">
-                            <article class="tile is-child box">
-				    <p class="title">{{ score|length }}</p>
-                                <p class="subtitle">Systems</p>
-                            </article>
-                        </div>
-			<!--
-                        <div class="tile is-parent">
-                            <article class="tile is-child box">
-                                <p class="title">59k</p>
-                                <p class="subtitle">Products</p>
-                            </article>
-                        </div>
-			-->
+<section class="info-tiles">
+	<div class="tile is-ancestor has-text-centered">
+		<div class="tile is-parent">
+			<article class="tile is-child box">
+				<p class="subtitle">Selectionner un groupe:</p>
+<FORM>
+<SELECT name="selected_group" size="1">
+<OPTION>
+{% for group in groups %}
+	<OPTION>{{ group.name }}
+{% endfor %}
+</SELECT>
+<INPUT TYPE="submit" NAME="send_group" VALUE="Valider">
+</FORM>
+                        </article>
+                      </div>
                     </div>
                 </section>
 
+  {% for group in groups %}
+  {% if selected_group == group.name %} 
                 <section class="hero is-info is-bold is-small">
                     <div class="hero-body">
                         <div class="container">
                             <h1 class="title">
-                                Systems Currency
+                                Systems Currency pour le groupe {{ group.name }}
                             </h1>
                             <h2 class="subtitle">
                                 Tri par colonne possible.
                             </h2>
-
   <table class="table is-striped is-hoverable is-fullwidth" id="system-currency">
-  <!-- {'score': 123, 'mod': 4, 'crit': 0, 'low': 0, 'bug': 21, 'imp': 3, 'enh': 1, 'sid': 1000010011} -->
   <thead>
   <tr>
-     <th>System Name</th>
-     <th data-sort-default>Score</th>
+    <th>System Name</th>
+    <th data-sort-default>Score</th>
     <th>Security Critical</th>
     <th>Security Important</th>
     <th>Security Moderate</th>
@@ -45,8 +45,11 @@
   </thead>
   <tbody>
   {% for item in score %}
+  {% for itemgroup in item.groups %}
+  {% if group.name == itemgroup.system_group_name %}
+  {% if itemgroup.subscribed == 1 %}
   <tr>
-    <td>{{ item.name }}</td>
+    <td><a href="?selected_sid={{ item.sid }}">{{ item.name }}</a></td>
     <td>{{ item.score }}</td>
     <td>{{ item.crit }}</td>
     <td>{{ item.imp }}</td>
@@ -55,8 +58,9 @@
     <td>{{ item.bug }}</td>
     <td>{{ item.enh }}</td>
   </tr>
-  {% else %}
-    <tr><td><em>Unbelievable.  No entries here so far</em></td></tr>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
   {% endfor %}
   </tbody>
   </table>
@@ -69,4 +73,44 @@
                         </div>
                     </div>
                 </section>
+  {% endif %}
+  {% endfor %}
+  {% if selected_sid != 0 %}
+  <section class="hero is-info is-bold is-small">
+	  <div class="hero-body">
+		  <div class="container">
+			  <h1 class="title">Liste des patchs pour le serveur {{ name }}</h1>
+                            <h2 class="subtitle">Tri par colonne possible.</h2>
+  <table class="table is-striped is-hoverable is-fullwidth" id="system-currency">
+  <thead>
+  <tr>
+    <th>Patche name</th>
+    <th data-sort-default>Patch type</th>
+    <th>Summary of the patch</th>
+    <th>Patch update date</th>
+    <th>Patch release date</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for patche in patches %}
+  <tr>
+    <td>{{ patche.advisory_name }}</td>
+    <td>{{ patche.advisory_type }}</td>
+    <td>{{ patche.advisory_synopsis }}</td>
+    <td>{{ patche.update_date }}</td>
+    <td>{{ patche.date }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+
+        <script>
+                new Tablesort(document.getElementById('system-currency'), {
+                  descending: true
+                });
+        </script>
+                        </div>
+                    </div>
+                </section>
+{% endif %}
 {% endblock %}
