@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+                <section class="info-tiles">
+                    <div class="tile is-ancestor has-text-centered">
+                        <div class="tile is-parent">
+                            <article class="tile is-child box">
+                                <p class="subtitle">Audit CVE</p>
+                            </article>
+                        </div>
+		    </div>
+			<div class="field">
+  				<label class="label">Entrer CVE à rechercher:</label>
+				<FORM>
+    					<input class="input" type="text" name="input_cve">
+					<input type=submit class="button is-success" value=Rechercher>
+				</FORM>
+			</div>
+                </section>
+                <section class="hero is-success is-bold is-small">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                CVE results:
+                            </h1>
+<table class="table is-striped is-hoverable is-fullwidth" id="system-currency">
+  <thead>
+  <tr>
+    <th>System Name</th>
+    <th>Patch status</th>
+    <th>Channel</th>
+    <th>Patches</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for item in cve %}
+  <tr>
+    <td>{{ item.hostname }}</td>
+    <td>{{ item.patch_status }}</td>
+    <td><table>{% for channel in item.channel_labels %}<tr><td>{{ channel }}</td></tr>{% endfor %}</table></td>
+    <td><table>{% for errata in item.errata_advisories %}<tr><td>{{ errata }}</td></tr>{% endfor %}</table></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+                        </div>
+                    </div>
+                </section>
+{% endblock %}
