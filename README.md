@@ -17,3 +17,8 @@ export FLASK_APP=app.py
 flask run --host=0.0.0.0
 ```
 
+## Use SUMA certificates
+```bash
+export FLASK_APP=app.py
+flask run --host=0.0.0.0 --cert=/root/ssl-build/RHN-ORG-TRUSTED-SSL-CERT --key=/root/ssl-build/RHN-ORG-PRIVATE-SSL-KEY
+```
